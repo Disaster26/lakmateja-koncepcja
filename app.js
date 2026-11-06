@@ -18,10 +18,12 @@
   var linki=[].slice.call(document.querySelectorAll('.nav a, .menu-mob nav a'));
   var sekcje=['top','oferta','sklep','o-firmie','kontakt'].map(function(id){return id==='top'?document.querySelector('.hero'):document.getElementById(id);});
   function ustaw(id){linki.forEach(function(a){var on=a.getAttribute('href')==='#'+id;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(wp){wp.forEach(function(w){if(w.isIntersecting){var el=w.target;ustaw(el.classList.contains('hero')?'top':el.id);}});},{rootMargin:'-45% 0px -50% 0px'});
-    sekcje.forEach(function(s){if(s)io.observe(s);});
-  }
+  var tik=false;
+  function liczAktywna(){tik=false;var y=innerHeight*0.45,akt='top';
+    sekcje.forEach(function(s){if(s&&s.getBoundingClientRect().top<=y)akt=s.classList.contains('hero')?'top':s.id;});
+    ustaw(akt);}
+  addEventListener('scroll',function(){if(!tik){tik=true;requestAnimationFrame(liczAktywna);}},{passive:true});
+  liczAktywna();
 
   // tory: przeciąganie myszą + strzałki
   document.querySelectorAll('[data-tor]').forEach(function(tor){
